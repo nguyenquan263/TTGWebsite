@@ -3,25 +3,26 @@ var Response = require('../utilities/response');
 module.exports = {
     async create(ctx) {
         try {
-            var data = await ctx.db.youtube_clips.create({
+            var data = await ctx.db.albums.create({
                 TITLE: ctx.request.body.title,
-                LINK: ctx.request.body.link,
-                DETAIL_INFO: ctx.request.body.detail_info,
+                THUMBNAIL_PICTURE: ctx.request.body.thumbnail_pic,
                 UPLOAD_DATE: ctx.request.body.upload_date,
+                CONTENT: ctx.request.body.content,
+                REF_LINK: ctx.request.body.ref_link,
                 STATUS: ctx.request.body.status
             });
 
-            ctx.body = new Response(0, "Adding a Youtube Clip successfully", data);
-        } catch (err) {
+            ctx.body = new Response(0, "Adding an Album successfully", data);
+        } catch(err) {
             ctx.body = new Response(1, "Internal Error.", err);
         }
     },
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.youtube_clips.findAll({});
+            var data = await ctx.db.albums.findAll({});
 
-            ctx.body = new Response(0, "This is the Youtube Clip list!", data);
+            ctx.body = new Response(0, "This is the Album list!", data);
 
         } catch (err) {
 
@@ -36,16 +37,16 @@ module.exports = {
 
             console.log(targetID);
 
-            var data = await ctx.db.youtube_clips.findOne({
+            var data = await ctx.db.albums.findOne({
                 where: {
                     ID: targetID
                 }
             });
 
             if (data) {
-                ctx.body = new Response(0, `This is the Youtube Clip with ID equal ${targetID}!`, data);
+                ctx.body = new Response(0, `This is the Album with ID equal ${targetID}!`, data);
             } else {
-                ctx.body = new Response(2, `Cannot find the Youtube Clip with ID equal ${targetID}`, null);
+                ctx.body = new Response(2, `Cannot find the Album with ID equal ${targetID}`, null);
             }
         } catch (err) {
             ctx.body = new Response(1, "Internal Error.", err);
@@ -56,16 +57,16 @@ module.exports = {
     async delete(ctx) {
         try {
             var targetID = ctx.params.id;
-            var result = await ctx.db.youtube_clips.destroy({
+            var result = await ctx.db.albums.destroy({
                 where: {
                     ID: targetID
                 }
             });
 
             if (result === 0 ) {
-                ctx.body = new Response(2, `Cannot find the Youtube Clip with ID equal ${targetID}`, null);
+                ctx.body = new Response(2, `Cannot find the Album with ID equal ${targetID}`, null);
             } else {
-                ctx.body = new Response(0, 'Delete this Youtube Clip successfully!', null);
+                ctx.body = new Response(0, 'Delete this Album successfully!', null);
             }
 
         } catch (ctx) {
@@ -77,26 +78,27 @@ module.exports = {
         try {
             var targetID = ctx.params.id;
 
-            var result = await ctx.db.youtube_clips.update({
+            var result = await ctx.db.albums.update({
                 TITLE: ctx.request.body.title,
-                LINK: ctx.request.body.link,
-                DETAIL_INFO: ctx.request.body.detail_info,
+                THUMBNAIL_PICTURE: ctx.request.body.thumbnail_pic,
                 UPLOAD_DATE: ctx.request.body.upload_date,
+                CONTENT: ctx.request.body.content,
+                REF_LINK: ctx.request.body.ref_link,
                 STATUS: ctx.request.body.status
             }, {
                 where: { ID: targetID}
             });
 
             if (result[0] === 0) {
-                ctx.body = new Response(2, `Cannot find the Youtube Clip with ID equal ${targetID}`, null);
+                ctx.body = new Response(2, `Cannot find the Album with ID equal ${targetID}`, null);
             } else {
-                var updatedYoutubeClip = await ctx.db.youtube_clips.findOne({
+                var updatedBlog = await ctx.db.albums.findOne({
                     where: {
                         ID: targetID
                     }
                 });
 
-                ctx.body = new Response(0, "Update this Youtube Clip successully", updatedYoutubeClip);
+                ctx.body = new Response(0, "Update this Album successully", updatedBlog);
             }
 
 
@@ -104,4 +106,4 @@ module.exports = {
             ctx.body = new Response(1, "Internal Error.", err);
         }
     }
-} 
+}

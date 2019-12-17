@@ -94,7 +94,7 @@ module.exports = {
 
 
 
-            if (results === 0) {
+            if (results[0] === 0) {
                 ctx.body = new Response(2, `Cannot find the Q & A with ID equal ${targetID}`, null);
             } else {
 
