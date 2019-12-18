@@ -6,6 +6,7 @@ module.exports = {
     async signUp(ctx) {
         try {
             var encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
+
             var data = await ctx.db.admins.create({
                 USERNAME: ctx.request.body.username,
                 PASSWORD: encryptedPassword,
@@ -36,14 +37,11 @@ module.exports = {
                         USERNAME: inputUsername
                     }
                 });
-                console.log(data);
-
-                
-                
+    
                 if (data) {
 
                     var checkPasswordResult = await Encryptor.comparePassword(inputPassword, data.PASSWORD);
-                    
+
                     if (checkPasswordResult) {
                         
 

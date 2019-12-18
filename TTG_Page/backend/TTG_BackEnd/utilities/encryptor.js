@@ -1,19 +1,17 @@
-const BCRYPT = require('bcrypt');
+const CRYPTO = require('crypto');
 const SALT_ROUND = 10;
 module.exports = {
     async hashPassword(password) {
-        try {
-            return await BCRYPT.hash(password, SALT_ROUND);
-        } catch (err) {
-            console.log(err);
-        }
+        var mykey = await CRYPTO.createCipher('aes-128-cbc', 'mypassword');
+        var mystr = mykey.update(password, 'utf8', 'hex')
+        return mystr += mykey.final('hex');
     },
 
     async comparePassword(password, hash) {
-        try {
-            return await BCRYPT.compare(password, hash);
-        } catch (err) {
-            console.log(err);
-        }
+        var mykey = await CRYPTO.createDecipher('aes-128-cbc', 'mypassword');
+        var mystr = mykey.update(hash, 'hex', 'utf8')
+        mystr += mykey.final('utf8');
+        
+        return (password === mystr);
     }
 }

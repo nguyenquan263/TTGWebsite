@@ -5,6 +5,7 @@ module.exports = {
     async create(ctx) {
         try {
             var encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
+            
             var data = await ctx.db.admins.create({
                 USERNAME: ctx.request.body.username,
                 PASSWORD: encryptedPassword,
