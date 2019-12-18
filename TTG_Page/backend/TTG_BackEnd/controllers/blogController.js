@@ -19,7 +19,11 @@ module.exports = {
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.blogs.findAll({});
+            var data = await ctx.db.blogs.findAll({
+                order: [
+                    ['ID', 'DESC']
+                ]
+            });
 
             ctx.body = new Response(0, "This is the Blog list!", data);
 

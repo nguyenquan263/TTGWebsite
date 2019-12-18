@@ -17,7 +17,11 @@ module.exports = {
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.blog_images.findAll({});
+            var data = await ctx.db.blog_images.findAll({
+                order: [
+                    ['ID', 'DESC']
+                ]
+            });
 
             ctx.body = new Response(0, "This is the Image list!", data);
 

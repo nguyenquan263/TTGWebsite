@@ -1,11 +1,13 @@
 var Response = require('../utilities/response');
+var Encryptor = require('../utilities/encryptor');
+
 module.exports = {
     async create(ctx) {
         try {
-
+            var encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
             var data = await ctx.db.admins.create({
                 USERNAME: ctx.request.body.username,
-                PASSWORD: ctx.request.body.password,
+                PASSWORD: encryptedPassword,
                 ROLE: ctx.request.body.role,
                 STATUS: ctx.request.body.status
             });
@@ -20,7 +22,11 @@ module.exports = {
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.admins.findAll({});
+            var data = await ctx.db.admins.findAll({
+                order: [
+                    ['ID', 'DESC']
+                ]
+            });
 
             ctx.body = new Response(0, "This is the Admin list!", data);
         } catch (err) {
@@ -78,9 +84,18 @@ module.exports = {
         try {
             var targetID = ctx.params.id;
 
+            var inputPassword = ctx.request.body.password;
+
+            var encryptedPassword = null;
+
+            if (inputPassword) {
+               encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
+            }
+
+
             var results = await ctx.db.admins.update({
                 USERNAME: ctx.request.body.username,
-                PASSWORD: ctx.request.body.password,
+                PASSWORD: encryptedPassword,
                 ROLE: ctx.request.body.role,
                 STATUS: ctx.request.body.status
             }, {

@@ -6,10 +6,14 @@ const PORT = 8080;
 var app = new KOA();
 
 
+
+
 var db = require("./models");
 var router = require('./routes');
 
-db.sequelize.sync()
+db.sequelize.sync({
+        logging: false
+    })
     .then(() => console.log("Database synced!"))
     .catch((err) => console.log(err));
 
@@ -22,6 +26,10 @@ app.use( async (ctx) => {
     ctx.body = "This is TTG BackEnd.";
 });
 
+var server = app.listen(PORT, function () {
+    var host = server.address().address;
+    var port = server.address().port;
 
-app.listen(PORT);
-console.log(`This application is running on port ${PORT}.`);
+    console.log(`Server is running on http://${host}:${port}`);
+
+});

@@ -4,7 +4,8 @@
     "password": "",
     "database": "ttg_webpage",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "secret": "TichTayGau"
   },
   "test": {
     "username": "root",

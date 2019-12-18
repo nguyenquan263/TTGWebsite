@@ -19,7 +19,11 @@ module.exports = {
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.youtube_clips.findAll({});
+            var data = await ctx.db.youtube_clips.findAll({
+                order: [
+                    ['ID', 'DESC']
+                ]
+            });
 
             ctx.body = new Response(0, "This is the Youtube Clip list!", data);
 

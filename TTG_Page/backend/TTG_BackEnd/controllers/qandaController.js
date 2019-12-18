@@ -23,7 +23,11 @@ module.exports = {
 
     async retrieveAll(ctx) {
         try {
-            var data = await ctx.db.qandas.findAll({});
+            var data = await ctx.db.qandas.findAll({
+                order: [
+                    ['ID', 'DESC']
+                ]
+            });
 
             ctx.body = new Response(0, "This is the Q & A list!", data);
         } catch (err) {
