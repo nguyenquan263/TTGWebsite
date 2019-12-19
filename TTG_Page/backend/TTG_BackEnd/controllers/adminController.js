@@ -3,6 +3,7 @@ var Encryptor = require('../utilities/encryptor');
 
 module.exports = {
     async create(ctx) {
+        console.log(ctx.request.body.file);
         try {
             var encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
             
@@ -22,6 +23,7 @@ module.exports = {
     },
 
     async retrieveAll(ctx) {
+        console.log(ctx);
         try {
             var data = await ctx.db.admins.findAll({
                 order: [

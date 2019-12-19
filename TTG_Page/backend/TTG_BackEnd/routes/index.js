@@ -1,6 +1,4 @@
 const KOA_ROUTER = require('koa-router');
-const KOA_MULTER = require('koa-multer');
-const PATH = require('path');
 
 const ADMIN_PREFIX = '/manage';
 const CLIENT_PREFIX = '/client';
@@ -18,7 +16,6 @@ var blogController = require('../controllers/blogController');
 var albumController = require('../controllers/albumController');
 var imageController = require('../controllers/imageController');
 var blogImageController = require('../controllers/blogImageController');
-var fileController = require('../controllers/fileController/fileController');
 
 //ADMIN ROUTES
 router.get(ADMIN_PREFIX + '/admin', adminController.retrieveAll);
@@ -86,56 +83,34 @@ var clientYoutubeClipController = require('../controllers/for_client/clientYoutu
 
 
 //SIGN UP - SIGN IN CONTROLLERS
-router.post(CLIENT_PREFIX+'/login', clientAdminController.signIn);
-router.post(CLIENT_PREFIX+'/signup', clientAdminController.signUp);
+router.post(CLIENT_PREFIX + '/login', clientAdminController.signIn);
+router.post(CLIENT_PREFIX + '/signup', clientAdminController.signUp);
 
 //ALBUM CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/album', clientAlbumController.retrieveAll);
+router.get(CLIENT_PREFIX + '/album', clientAlbumController.retrieveAll);
 
 //BLOG CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/blog', clientBlogController.retrieveAll);
+router.get(CLIENT_PREFIX + '/blog', clientBlogController.retrieveAll);
 
 //BLOG IMAGE CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/blog_image', clientBlogImageController.retrieveAll);
+router.get(CLIENT_PREFIX + '/blog_image', clientBlogImageController.retrieveAll);
 
 //Q & A CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/qanda', clientQAndAController.retrieveAll);
+router.get(CLIENT_PREFIX + '/qanda', clientQAndAController.retrieveAll);
 
 //IMAGE CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/image', clientImageController.retrieveAll);
+router.get(CLIENT_PREFIX + '/image', clientImageController.retrieveAll);
 
 //YOUTUBE CLIP CONTROLLER FOR CLIENT
-router.get(CLIENT_PREFIX+'/youtube_clip', clientYoutubeClipController.retrieveAll);
+router.get(CLIENT_PREFIX + '/youtube_clip', clientYoutubeClipController.retrieveAll);
 
 
 
 /*-------------------FILE CONTROLLERS------------------------*/
 
-const storage = KOA_MULTER.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, PATH.join(__dirname ,'/public'))
-    },
-    filename: function (req, file, cb) {
-        let type = file.originalname.split('.')[1]
-        cb(null, `${file.fieldname}-${Date.now().toString(16)}.${type}`)
-    }
-})
-// file upload restrictions
-const limits = {
-    Fields: 10,// number of non-file fields
-    FileSize: 500 * 1024,// fileSize in b
-    Files: 1// files
-}
-const upload = KOA_MULTER({storage,limits})
+var fileUploadController = require('../controllers/fileController/fileController');
 
-router.post('/user/file', upload.single('file'), async (ctx,next)=>{
-    ctx.body = {
-        code: 1,
-        data: ctx.file
-    }
-})
-
-
+router.post(ADMIN_PREFIX+'/uploadFile', fileUploadController.uploadFile);
 
 
 /*--------ANONYMOUS CONTROLLERS---------*/
