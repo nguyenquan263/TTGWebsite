@@ -1,18 +1,24 @@
 var Response = require('../utilities/response');
+var multer = require('@koa/multer');
+var multerStorage = require('../utilities/uploadStorage');
 
 module.exports = {
     async create(ctx) {
         try {
+
+            var uploader = multer({ storage: multerStorage }).single('thumbnail_pic');
+            await uploader(ctx);
+
             var data = await ctx.db.blogs.create({
                 TITLE: ctx.request.body.title,
-                THUMBNAIL_PIC: ctx.request.body.thumbnail_pic,
+                THUMBNAIL_PIC: ctx.file.filename,
                 CONTENT: ctx.request.body.content,
                 UPLOAD_DATE: ctx.request.body.upload_date,
                 STATUS: ctx.request.body.status
             });
 
             ctx.body = new Response(0, "Adding a Blog successfully", data);
-        } catch(err) {
+        } catch (err) {
             ctx.body = new Response(1, "Internal Error.", err);
         }
     },
@@ -66,7 +72,7 @@ module.exports = {
                 }
             });
 
-            if (result === 0 ) {
+            if (result === 0) {
                 ctx.body = new Response(2, `Cannot find the Blog with ID equal ${targetID}`, null);
             } else {
                 ctx.body = new Response(0, 'Delete this Blog successfully!', null);
@@ -81,14 +87,30 @@ module.exports = {
         try {
             var targetID = ctx.params.id;
 
-            var result = await ctx.db.blogs.update({
-                TITLE: ctx.request.body.title,
-                THUMBNAIL_PIC: ctx.request.body.thumbnail_pic,
-                CONTENT: ctx.request.body.content,
-                UPLOAD_DATE: ctx.request.body.upload_date,
-                STATUS: ctx.request.body.status
-            }, {
-                where: { ID: targetID}
+            var uploader = multer({ storage: multerStorage }).single('thumbnail_pic');
+            await uploader(ctx);
+
+            var updateContent = {};
+
+            if (typeof ctx.file !== 'undefined') {
+                updateContent = {
+                    TITLE: ctx.request.body.title,
+                    THUMBNAIL_PIC: ctx.file.filename,
+                    UPLOAD_DATE: ctx.request.body.upload_date,
+                    CONTENT: ctx.request.body.content,
+                    STATUS: ctx.request.body.status
+                }
+            } else {
+                updateContent = {
+                    TITLE: ctx.request.body.title,
+                    UPLOAD_DATE: ctx.request.body.upload_date,
+                    CONTENT: ctx.request.body.content,
+                    STATUS: ctx.request.body.status
+                }
+            }
+
+            var result = await ctx.db.blogs.update(updateContent, {
+                where: { ID: targetID }
             });
 
             if (result[0] === 0) {

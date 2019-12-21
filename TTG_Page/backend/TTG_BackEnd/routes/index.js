@@ -1,11 +1,11 @@
 const KOA_ROUTER = require('koa-router');
-
 const ADMIN_PREFIX = '/manage';
 const CLIENT_PREFIX = '/client';
-
 const Response = require('../utilities/response');
+const KOA_BODY = require('koa-body');
 
 var router = new KOA_ROUTER();
+
 
 /*----------ADMIN CONTROLLERS----------*/
 
@@ -20,23 +20,23 @@ var blogImageController = require('../controllers/blogImageController');
 //ADMIN ROUTES
 router.get(ADMIN_PREFIX + '/admin', adminController.retrieveAll);
 router.get(ADMIN_PREFIX + '/admin/:id', adminController.retrieveOne);
-router.post(ADMIN_PREFIX + '/admin', adminController.create);
+router.post(ADMIN_PREFIX + '/admin', KOA_BODY(), adminController.create);
 router.delete(ADMIN_PREFIX + '/admin/:id', adminController.delete);
-router.put(ADMIN_PREFIX + '/admin/:id', adminController.update);
+router.put(ADMIN_PREFIX + '/admin/:id', KOA_BODY(), adminController.update);
 
 //YOUTUBE CLIP ROUTES
 router.get(ADMIN_PREFIX + '/youtube_clip', youtubeClipController.retrieveAll);
 router.get(ADMIN_PREFIX + '/youtube_clip/:id', youtubeClipController.retrieveOne);
-router.post(ADMIN_PREFIX + '/youtube_clip', youtubeClipController.create);
+router.post(ADMIN_PREFIX + '/youtube_clip', KOA_BODY(), youtubeClipController.create);
 router.delete(ADMIN_PREFIX + '/youtube_clip/:id', youtubeClipController.delete);
-router.put(ADMIN_PREFIX + '/youtube_clip/:id', youtubeClipController.update);
+router.put(ADMIN_PREFIX + '/youtube_clip/:id', KOA_BODY(), youtubeClipController.update);
 
 //Q & A ROUTES
 router.get(ADMIN_PREFIX + '/qanda', qAndAController.retrieveAll);
 router.get(ADMIN_PREFIX + '/qanda/:id', qAndAController.retrieveOne);
-router.post(ADMIN_PREFIX + '/qanda', qAndAController.create);
+router.post(ADMIN_PREFIX + '/qanda', KOA_BODY(), qAndAController.create);
 router.delete(ADMIN_PREFIX + '/qanda/:id', qAndAController.delete);
-router.put(ADMIN_PREFIX + '/qanda/:id', qAndAController.update);
+router.put(ADMIN_PREFIX + '/qanda/:id', KOA_BODY(), qAndAController.update);
 
 //BLOG ROUTES
 router.get(ADMIN_PREFIX + '/blog', blogController.retrieveAll);
@@ -83,8 +83,8 @@ var clientYoutubeClipController = require('../controllers/for_client/clientYoutu
 
 
 //SIGN UP - SIGN IN CONTROLLERS
-router.post(CLIENT_PREFIX + '/login', clientAdminController.signIn);
-router.post(CLIENT_PREFIX + '/signup', clientAdminController.signUp);
+router.post(CLIENT_PREFIX + '/login', KOA_BODY(), clientAdminController.signIn);
+router.post(CLIENT_PREFIX + '/signup', KOA_BODY(), clientAdminController.signUp);
 
 //ALBUM CONTROLLER FOR CLIENT
 router.get(CLIENT_PREFIX + '/album', clientAlbumController.retrieveAll);
@@ -106,11 +106,6 @@ router.get(CLIENT_PREFIX + '/youtube_clip', clientYoutubeClipController.retrieve
 
 
 
-/*-------------------FILE CONTROLLERS------------------------*/
-
-var fileUploadController = require('../controllers/fileController/fileController');
-
-router.post(ADMIN_PREFIX+'/uploadFile', fileUploadController.uploadFile);
 
 
 /*--------ANONYMOUS CONTROLLERS---------*/

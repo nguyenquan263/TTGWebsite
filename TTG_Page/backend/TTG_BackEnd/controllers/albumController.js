@@ -1,11 +1,17 @@
 var Response = require('../utilities/response');
+var multer = require('@koa/multer');
+var multerStorage = require('../utilities/uploadStorage');
 
 module.exports = {
     async create(ctx) {
+
         try {
+            var uploader = multer({ storage: multerStorage }).single('thumbnail_pic');
+            await uploader(ctx);
+
             var data = await ctx.db.albums.create({
                 TITLE: ctx.request.body.title,
-                THUMBNAIL_PICTURE: ctx.request.body.thumbnail_pic,
+                THUMBNAIL_PICTURE: ctx.file.filename,
                 UPLOAD_DATE: ctx.request.body.upload_date,
                 CONTENT: ctx.request.body.content,
                 REF_LINK: ctx.request.body.ref_link,
@@ -13,12 +19,13 @@ module.exports = {
             });
 
             ctx.body = new Response(0, "Adding an Album successfully", data);
-        } catch(err) {
+        } catch (err) {
             ctx.body = new Response(1, "Internal Error.", err);
         }
     },
 
     async retrieveAll(ctx) {
+        console.log(ctx);
         try {
             var data = await ctx.db.albums.findAll({
                 order: [
@@ -67,7 +74,7 @@ module.exports = {
                 }
             });
 
-            if (result === 0 ) {
+            if (result === 0) {
                 ctx.body = new Response(2, `Cannot find the Album with ID equal ${targetID}`, null);
             } else {
                 ctx.body = new Response(0, 'Delete this Album successfully!', null);
@@ -79,18 +86,39 @@ module.exports = {
     },
 
     async update(ctx) {
+
         try {
             var targetID = ctx.params.id;
 
-            var result = await ctx.db.albums.update({
-                TITLE: ctx.request.body.title,
-                THUMBNAIL_PICTURE: ctx.request.body.thumbnail_pic,
-                UPLOAD_DATE: ctx.request.body.upload_date,
-                CONTENT: ctx.request.body.content,
-                REF_LINK: ctx.request.body.ref_link,
-                STATUS: ctx.request.body.status
-            }, {
-                where: { ID: targetID}
+
+            var uploader = multer({ storage: multerStorage }).single('thumbnail_pic');
+            await uploader(ctx);
+
+
+            var updateContent = {};
+
+            if (typeof ctx.file !== 'undefined') {
+                updateContent = {
+                    TITLE: ctx.request.body.title,
+                    THUMBNAIL_PICTURE: ctx.file.filename,
+                    UPLOAD_DATE: ctx.request.body.upload_date,
+                    CONTENT: ctx.request.body.content,
+                    REF_LINK: ctx.request.body.ref_link,
+                    STATUS: ctx.request.body.status
+                }
+            } else {
+                updateContent = {
+                    TITLE: ctx.request.body.title,
+                    UPLOAD_DATE: ctx.request.body.upload_date,
+                    CONTENT: ctx.request.body.content,
+                    REF_LINK: ctx.request.body.ref_link,
+                    STATUS: ctx.request.body.status
+                }
+            }
+
+
+            var result = await ctx.db.albums.update(updateContent, {
+                where: { ID: targetID }
             });
 
             if (result[0] === 0) {
