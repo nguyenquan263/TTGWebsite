@@ -6,7 +6,7 @@ module.exports = {
         console.log(ctx.request.body.file);
         try {
             var encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
-            
+
             var data = await ctx.db.admins.create({
                 USERNAME: ctx.request.body.username,
                 PASSWORD: encryptedPassword,
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     async retrieveAll(ctx) {
-        console.log(ctx);
+
         try {
             var data = await ctx.db.admins.findAll({
                 order: [
@@ -92,7 +92,7 @@ module.exports = {
             var encryptedPassword = null;
 
             if (inputPassword) {
-               encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
+                encryptedPassword = await Encryptor.hashPassword(ctx.request.body.password);
             }
 
 

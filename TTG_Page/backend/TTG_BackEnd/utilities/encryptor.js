@@ -1,5 +1,4 @@
 const CRYPTO = require('crypto');
-const SALT_ROUND = 10;
 module.exports = {
     async hashPassword(password) {
         var mykey = await CRYPTO.createCipher('aes-128-cbc', 'mypassword');
@@ -11,7 +10,7 @@ module.exports = {
         var mykey = await CRYPTO.createDecipher('aes-128-cbc', 'mypassword');
         var mystr = mykey.update(hash, 'hex', 'utf8')
         mystr += mykey.final('utf8');
-        
+
         return (password === mystr);
     }
 }

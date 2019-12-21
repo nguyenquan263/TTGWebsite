@@ -6,5 +6,9 @@ module.exports = {
         return JWT.sign(payload, CONFIG.development.secret, {
             expiresIn: expiresIn
         });
+    },
+
+    verify(token) {
+        return JWT.verify(token, CONFIG.development.secret);
     }
 }
